@@ -44,8 +44,11 @@ const DetailTransaksi = ({
     bukaInvoicePemesanan,
     setBukaInvoicePemesanan,
   } = constDetailTransaksi();
-  if (!pemesanan) return null;
+
   const { handleDownload } = useInvoicePDF();
+
+  if (!pemesanan) return null;
+
   return (
     <Dialog
       open={isOpen}
