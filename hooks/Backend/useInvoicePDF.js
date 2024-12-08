@@ -4,182 +4,140 @@ import "jspdf-autotable";
 
 const useInvoicePDF = () => {
   const generateInvoicePDF = (pemesanan, userData, ajukanDetail) => {
-    const doc = new jsPDF();
+    try {
+      const doc = new jsPDF();
 
-    const imageUrl = "/assets/img/Faktur-Header.png";
-    const imgWidth = 210;
-    const imgHeight = 40;
-    const imgX = 0;
-    const imgY = 0;
+      const imageUrl = "/assets/img/Faktur-Header.png";
+      const imgWidth = 210;
+      const imgHeight = 40;
+      doc.addImage(imageUrl, "JPEG", 0, 0, imgWidth, imgHeight);
 
-    doc.addImage(imageUrl, "JPEG", imgX, imgY, imgWidth, imgHeight);
+      const title = "Dokumen Pesanan Anda";
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(16);
+      const pageWidth = doc.internal.pageSize.width;
+      const titleX = (pageWidth - doc.getTextWidth(title)) / 2;
+      doc.text(title, titleX, imgHeight + 15);
 
-    const text = "Dokumen Pesanan Anda";
-    const textWidth = doc.getTextWidth(text);
-    const pageWidth = doc.internal.pageSize.width;
-    const titleX = (pageWidth - textWidth) / 2;
-    const titleY = imgY + imgHeight + 15;
+      const statusMapping = {
+        "Menunggu Pembayaran": { label: "Belum Bayar", color: [255, 0, 0] },
+        Ditolak: { label: "Ditolak", color: [255, 0, 0] },
+        "Sedang Ditinjau": { label: "Sedang Ditinjau", color: [255, 255, 0] },
+        Lunas: { label: "Lunas", color: [0, 128, 0] },
+      };
 
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(16);
-    doc.text(text, titleX, titleY);
+      const statusData = statusMapping[pemesanan.Status_Pembayaran] || {
+        label: "Status Tidak Diketahui",
+        color: [128, 128, 128],
+      };
 
-    let statusLabel = "";
-    let statusColor = "";
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(12);
+      doc.setTextColor(...statusData.color);
+      const statusX = pageWidth - doc.getTextWidth(statusData.label) - 14;
+      doc.text(statusData.label, statusX, imgHeight + 30);
 
-    switch (pemesanan.Status_Pembayaran) {
-      case "Menunggu Pembayaran":
-        statusLabel = "Belum Bayar";
-        statusColor = "red";
-        break;
-      case "Ditolak":
-        statusLabel = "Ditolak";
-        statusColor = "red";
-        break;
-      case "Sedang Ditinjau":
-        statusLabel = "Sedang Ditinjau";
-        statusColor = "yellow";
-        break;
-      case "Lunas":
-        statusLabel = "Lunas";
-        statusColor = "green";
-        break;
-      default:
-        statusLabel = "Status Tidak Diketahui";
-        statusColor = "gray";
-    }
+      doc.setTextColor(0, 0, 0);
 
-    const statusX = pageWidth - doc.getTextWidth(statusLabel) - 14;
-    const statusY = titleY + 10;
-    switch (statusColor) {
-      case "red":
-        doc.setTextColor(255, 0, 0);
-        break;
-      case "yellow":
-        doc.setTextColor(255, 255, 0);
-        break;
-      case "green":
-        doc.setTextColor(0, 128, 0);
-        break;
-      case "gray":
-        doc.setTextColor(128, 128, 128);
-        break;
-      default:
-        doc.setTextColor(0, 0, 0);
-    }
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(12);
-    doc.text(statusLabel, statusX, statusY);
+      const billingDetails = [
+        { label: "Nomor Pesanan", value: `#${pemesanan.id}` },
+        { label: "Nomor Ajukan", value: pemesanan.ID_Ajukan },
+        {
+          label: "Tanggal Pemesanan",
+          value: new Date(
+            pemesanan.Tanggal_Pemesanan.seconds * 1000
+          ).toLocaleString(),
+        },
+        {
+          label: "Tanggal Pengajuan",
+          value: new Date(
+            ajukanDetail.Tanggal_Pembuatan_Ajukan.seconds * 1000
+          ).toLocaleString(),
+        },
+        {
+          label: "Detail Penerima",
+          value: userData.Nama_Perusahaan
+            ? `${userData.Nama_Lengkap} || ${userData.Nama_Perusahaan}`
+            : userData.Nama_Lengkap,
+        },
+        {
+          label: "Email",
+          value: userData.Email_Perusahaan
+            ? `${userData.Email} || ${userData.Email_Perusahaan}`
+            : userData.Email,
+        },
+        {
+          label: "Tanggal Pembayaran",
+          value:
+            pemesanan.ajukanDetail?.Jenis_Ajukan === "Gratis"
+              ? "GRATIS"
+              : pemesanan.Status_Pembayaran === "Sedang Ditinjau"
+              ? "Pembayaran sedang ditinjau"
+              : pemesanan.Status_Pembayaran === "Ditolak"
+              ? "Pembayaran Anda Ditolak"
+              : pemesanan.transaksiDetail?.Tanggal_Pengiriman_Bukti
+              ? new Date(
+                  pemesanan.transaksiDetail.Tanggal_Pengiriman_Bukti.seconds *
+                    1000
+                ).toLocaleString()
+              : "-",
+        },
+      ];
 
-    doc.setTextColor(0, 0, 0);
+      let billingY = imgHeight + 40;
+      billingDetails.forEach((item) => {
+        doc.setFont("helvetica", "normal");
+        doc.text(`${item.label}: ${item.value}`, 14, billingY);
+        billingY += 8;
+      });
 
-    const billingDetails = [
-      { label: "Nomor Pesanan", value: `#${pemesanan.id}` },
-      { label: "Nomor Ajukan", value: pemesanan.ID_Ajukan },
-      {
-        label: "Tanggal Pemesanan",
-        value: new Date(
-          pemesanan.Tanggal_Pemesanan.seconds * 1000
-        ).toLocaleString(),
-      },
-      {
-        label: "Tanggal Pengajuan",
-        value: new Date(
-          ajukanDetail.Tanggal_Pembuatan_Ajukan.seconds * 1000
-        ).toLocaleString(),
-      },
-      {
-        label: "Detail Penerima",
-        value: userData.Nama_Perusahaan
-          ? `${userData.Nama_Lengkap} || ${userData.Nama_Perusahaan}`
-          : userData.Nama_Lengkap,
-      },
-      {
-        label: "Email",
-        value: userData.Email_Perusahaan
-          ? `${userData.Email} || ${userData.Email_Perusahaan}`
-          : userData.Email,
-      },
-      {
-        label: "Tanggal Pembayaran",
-        value:
-          pemesanan.ajukanDetail.Jenis_Ajukan === "Gratis"
-            ? "GRATIS"
-            : pemesanan.Status_Pembayaran === "Sedang Ditinjau"
-            ? "Pembayaran sedang ditinjau"
-            : pemesanan.Status_Pembayaran === "Ditolak"
-            ? "Pembayaran Anda Ditolak"
-            : new Date(
-                pemesanan.transaksiDetail?.Tanggal_Pengiriman_Bukti?.seconds *
-                  1000
-              ).toLocaleString() || "-",
-      },
-    ];
-
-    let billingY = statusY + 15;
-    billingDetails.forEach((item) => {
-      const labelX = 14;
-      const valueX = 60;
-      doc.setFont("helvetica", "normal");
-      doc.text(`${item.label}`, labelX, billingY);
-      doc.text(`: ${item.value}`, valueX, billingY);
-      billingY += 8;
-    });
-
-    doc.autoTable({
-      head: [
-        [
-          "Nama Produk",
-          "Nama Instansi",
-          "Kuantitas",
-          "Harga Produk",
-          "Total Harga per Produk",
+      doc.autoTable({
+        head: [
+          [
+            "Nama Produk",
+            "Nama Instansi",
+            "Kuantitas",
+            "Harga Produk",
+            "Total Harga per Produk",
+          ],
         ],
-      ],
-      body: pemesanan.Data_Keranjang.map((produk) => [
-        produk.Nama,
-        produk.Pemilik,
-        produk.Kuantitas,
-        new Intl.NumberFormat("id-ID", {
-          style: "currency",
-          currency: "IDR",
-          minimumFractionDigits: 0,
-          maximumFractionDigits: 0,
-        }).format(produk.Harga),
-        new Intl.NumberFormat("id-ID", {
-          style: "currency",
-          currency: "IDR",
-          minimumFractionDigits: 0,
-          maximumFractionDigits: 0,
-        }).format(produk.Harga * produk.Kuantitas),
-      ]),
-      startY: billingY + 10,
-      margin: { top: 20 },
-    });
+        body: pemesanan.Data_Keranjang.map((produk) => [
+          produk.Nama,
+          produk.Pemilik,
+          produk.Kuantitas,
+          new Intl.NumberFormat("id-ID", {
+            style: "currency",
+            currency: "IDR",
+          }).format(produk.Harga),
+          new Intl.NumberFormat("id-ID", {
+            style: "currency",
+            currency: "IDR",
+          }).format(produk.Harga * produk.Kuantitas),
+        ]),
+        startY: billingY + 10,
+      });
 
-    const totalPrice = new Intl.NumberFormat("id-ID", {
-      style: "currency",
-      currency: "IDR",
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(pemesanan.Total_Harga_Pesanan);
-    const totalYPosition = doc.lastAutoTable.finalY + 10;
-    doc.setFont("helvetica", "bold");
-    doc.text("Total Pesanan", 14, totalYPosition);
-    doc.setFont("helvetica", "normal");
-    doc.text(`: ${totalPrice}`, 60, totalYPosition);
+      const totalPrice = new Intl.NumberFormat("id-ID", {
+        style: "currency",
+        currency: "IDR",
+      }).format(pemesanan.Total_Harga_Pesanan);
 
-    const noteText =
-      "Catatan: Jika ada permasalahan atau kesalahan dalam dokumen ini, silakan hubungi stasiun sesuai pesanan anda.";
-    const marginLeft = 14;
+      const totalY = doc.lastAutoTable.finalY + 10;
+      doc.setFont("helvetica", "bold");
+      doc.text("Total Pesanan", 14, totalY);
+      doc.setFont("helvetica", "normal");
+      doc.text(`: ${totalPrice}`, 60, totalY);
 
-    const availableWidth = pageWidth - marginLeft * 2;
-    const splitNote = doc.splitTextToSize(noteText, availableWidth);
+      const noteText =
+        "Catatan: Jika ada permasalahan atau kesalahan dalam dokumen ini, silakan hubungi stasiun sesuai pesanan anda.";
+      const noteY = totalY + 10;
+      doc.text(doc.splitTextToSize(noteText, pageWidth - 28), 14, noteY);
 
-    const noteYPosition = doc.lastAutoTable.finalY + 20;
-    doc.text(splitNote, marginLeft, noteYPosition);
-
-    doc.save(`Invoice_Pesanan_${pemesanan.id}.pdf`);
+      doc.save(`Invoice_Pesanan_${pemesanan.id}.pdf`);
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      toast.error("Terjadi kesalahan saat membuat PDF.");
+    }
   };
 
   const handleDownload = (pemesanan, userData, ajukanDetail) => {
