@@ -20,8 +20,19 @@ const KegiatanTarifPNBPForm = ({ onSubmit, ID_Ajukan }) => {
     e.preventDefault();
     const allFiles = Object.values(files).flat();
 
-    if (allFiles.length === 0) {
-      toast.error("Silakan pilih file untuk diunggah.");
+    if (
+      !files.IdentitasDiri_TarifPNBP ||
+      files.IdentitasDiri_TarifPNBP.length === 0
+    ) {
+      toast.error("Silakan unggah file Identitas KTP.");
+      return;
+    }
+
+    if (
+      !files.SuratPengantar_TarifPNBP ||
+      files.SuratPengantar_TarifPNBP.length === 0
+    ) {
+      toast.error("Silakan unggah file Surat Pengantar.");
       return;
     }
 

@@ -19,8 +19,11 @@ const KegiatanPertahananForm = ({ onSubmit, ID_Ajukan }) => {
     e.preventDefault();
     const allFiles = Object.values(files).flat();
 
-    if (allFiles.length === 0) {
-      toast.error("Silakan pilih file untuk diunggah.");
+    if (
+      !files.SuratPermintaan_PertahananKeamanan ||
+      files.SuratPermintaan_PertahananKeamanan.length === 0
+    ) {
+      toast.error("Silakan unggah file Surat Perminataan.");
       return;
     }
 

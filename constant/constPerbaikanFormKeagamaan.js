@@ -19,8 +19,11 @@ const KegiatanKeagamaanForm = ({ onSubmit, ID_Ajukan }) => {
     e.preventDefault();
     const allFiles = Object.values(files).flat();
 
-    if (allFiles.length === 0) {
-      toast.error("Silakan pilih file untuk diunggah.");
+    if (
+      !files.SuratPermintaan_Keagamaan ||
+      files.SuratPermintaan_Keagamaan.length === 0
+    ) {
+      toast.error("Silakan unggah file Surat Permintaan.");
       return;
     }
 

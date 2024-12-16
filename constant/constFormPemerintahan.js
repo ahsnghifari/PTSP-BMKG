@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "@/app/globals.css";
 import { Input, Button } from "@material-tailwind/react";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 
 const KegiatanPemerintahanForm = ({ onSubmit }) => {
   const [files, setFiles] = useState({});
@@ -18,8 +18,19 @@ const KegiatanPemerintahanForm = ({ onSubmit }) => {
     e.preventDefault();
     const allFiles = Object.values(files).flat();
 
-    if (allFiles.length === 0) {
-      toast.error("Silakan pilih file untuk diunggah.");
+    if (
+      !files.SuratKerjasama_Pemerintahan ||
+      files.SuratKerjasama_Pemerintahan.length === 0
+    ) {
+      toast.error("Silakan unggah file Surat Kerjasama Pemerintahan.");
+      return;
+    }
+
+    if (
+      !files.SuratPengantar_Pemerintahan ||
+      files.SuratPengantar_Pemerintahan.length === 0
+    ) {
+      toast.error("Silakan unggah file Surat Pengantar Pemerintahan.");
       return;
     }
 

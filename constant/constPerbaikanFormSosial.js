@@ -20,8 +20,11 @@ const KegiatanSosialForm = ({ onSubmit, ID_Ajukan }) => {
     e.preventDefault();
     const allFiles = Object.values(files).flat();
 
-    if (allFiles.length === 0) {
-      toast.error("Silakan pilih file untuk diunggah.");
+    if (
+      !files.SuratPermintaan_Sosial ||
+      files.SuratPermintaan_Sosial.length === 0
+    ) {
+      toast.error("Silakan unggah file Surat Permintaan.");
       return;
     }
 

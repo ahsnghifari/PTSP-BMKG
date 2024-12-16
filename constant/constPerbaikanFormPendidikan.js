@@ -20,8 +20,32 @@ const KegiatanPendidikanPenelitianForm = ({ onSubmit, ID_Ajukan }) => {
     e.preventDefault();
     const allFiles = Object.values(files).flat();
 
-    if (allFiles.length === 0) {
-      toast.error("Silakan pilih file untuk diunggah.");
+    if (
+      !files.IdentitasDiri_Pendidikan ||
+      files.IdentitasDiri_Pendidikan.length === 0
+    ) {
+      toast.error("Silakan unggah file Identitas KTP.");
+      return;
+    }
+
+    if (
+      !files.SuratPengantar_Pendidikan ||
+      files.SuratPengantar_Pendidikan.length === 0
+    ) {
+      toast.error("Silakan unggah file Surat Pengantar.");
+      return;
+    }
+
+    if (
+      !files.SuratPernyataan_Pendidikan ||
+      files.SuratPernyataan_Pendidikan.length === 0
+    ) {
+      toast.error("Silakan unggah file Surat Pernyataan.");
+      return;
+    }
+
+    if (!files.Proposal_Pendidikan || files.Proposal_Pendidikan.length === 0) {
+      toast.error("Silakan unggah file Proposal Pendidikan.");
       return;
     }
 

@@ -9,6 +9,7 @@ import {
   MenuItem,
   Badge,
 } from "@/app/MTailwind";
+import toast, { Toaster } from "react-hot-toast";
 import PenanggulanganBencanaForm from "@/constant/constFormPenanggulanganBencana";
 import KegiatanKeagamaanForm from "@/constant/constFormKeagamaan";
 import KegiatanSosialForm from "@/constant/constFormSosial";

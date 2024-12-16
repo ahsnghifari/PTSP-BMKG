@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "@/app/globals.css";
 import { Input, Button } from "@material-tailwind/react";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 
 const KegiatanKeagamaanForm = ({ onSubmit }) => {
   const [files, setFiles] = useState({});
@@ -18,8 +18,11 @@ const KegiatanKeagamaanForm = ({ onSubmit }) => {
     e.preventDefault();
     const allFiles = Object.values(files).flat();
 
-    if (allFiles.length === 0) {
-      toast.error("Silakan pilih file untuk diunggah.");
+    if (
+      !files.SuratPermintaan_Keagamaan ||
+      files.SuratPermintaan_Keagamaan.length === 0
+    ) {
+      toast.error("Silakan unggah file Surat Permintaan.");
       return;
     }
 

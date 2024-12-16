@@ -1,7 +1,7 @@
 import { auth, firestore } from "@/lib/firebaseConfig";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { doc, getDoc } from "firebase/firestore";
 
@@ -9,8 +9,15 @@ const useMasukDenganGoogle = () => {
   const pengarah = useRouter();
   const [sedangMemuatMasukDenganGoogle, setSedangMemuatMasukDenganGoogle] =
     useState(false);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const masukDenganGoogle = async () => {
+    if (!isClient) return;
+
     const googleProvider = new GoogleAuthProvider();
     googleProvider.setCustomParameters({
       prompt: "select_account",
@@ -20,7 +27,11 @@ const useMasukDenganGoogle = () => {
       setSedangMemuatMasukDenganGoogle(true);
       const hasil = await signInWithPopup(auth, googleProvider);
       const pengguna = hasil.user;
-      localStorage.setItem("ID", pengguna.uid);
+
+      if (isClient) {
+        localStorage.setItem("ID", pengguna.uid);
+      }
+
       toast.success("Berhasil masuk dengan Google!");
 
       const id = pengguna.uid;
@@ -31,6 +42,7 @@ const useMasukDenganGoogle = () => {
         getDoc(docRefPerorangan),
         getDoc(docRefPerusahaan),
       ]);
+
       if (docPerorangan.exists() || docPerusahaan.exists()) {
         pengarah.push("/Beranda");
       } else {

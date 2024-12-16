@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "@/app/globals.css";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 import { Button } from "@material-tailwind/react";
 
 const PenanggulanganBencanaForm = ({ onSubmit }) => {
@@ -19,8 +19,11 @@ const PenanggulanganBencanaForm = ({ onSubmit }) => {
     e.preventDefault();
     const allFiles = Object.values(files).flat();
 
-    if (allFiles.length === 0) {
-      toast.error("Silakan pilih file untuk diunggah.");
+    if (
+      !files.SuratPengantar_PenanggulanganBencana ||
+      files.SuratPengantar_PenanggulanganBencana.length === 0
+    ) {
+      toast.error("Silakan unggah file Surat Pengantar.");
       return;
     }
     setLoading(true);

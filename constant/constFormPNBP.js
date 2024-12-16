@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "@/app/globals.css";
 import { Input, Button } from "@material-tailwind/react";
-import { toast } from "react-toastify";
+import toast, { Toaster } from "react-hot-toast";
 
 const KegiatanTarifPNBPForm = ({ onSubmit }) => {
   const [files, setFiles] = useState({});
@@ -17,13 +17,24 @@ const KegiatanTarifPNBPForm = ({ onSubmit }) => {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    const allFiles = Object.values(files).flat();
 
-    if (allFiles.length === 0) {
-      toast.error("Silakan pilih file untuk diunggah.");
+    if (
+      !files.IdentitasDiri_TarifPNBP ||
+      files.IdentitasDiri_TarifPNBP.length === 0
+    ) {
+      toast.error("Silakan unggah file Identitas KTP.");
       return;
     }
 
+    if (
+      !files.SuratPengantar_TarifPNBP ||
+      files.SuratPengantar_TarifPNBP.length === 0
+    ) {
+      toast.error("Silakan unggah file Surat Pengantar.");
+      return;
+    }
+
+    const allFiles = Object.values(files).flat();
     setLoading(true);
 
     try {
