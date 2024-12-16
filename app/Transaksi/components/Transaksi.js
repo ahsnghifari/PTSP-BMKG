@@ -53,88 +53,92 @@ const ListPesanan = () => {
 
   return (
     <div>
-      {pemesananData.map((pemesanan) => (
-        <Card
-          key={pemesanan.id}
-          shadow={false}
-          className="rounded-lg border-2 border-gray-300 p-4 my-5"
-        >
-          <div className="mb-4 flex items-start justify-between">
-            <div className="flex items-center gap-3">
-              <div className="border border-gray-200 p-2.5 rounded-lg">
-                <RiFileList3Fill className="h-6 w-6 text-gray-900" />
+      {pemesananData
+        .sort(
+          (a, b) => b.Tanggal_Pemesanan.seconds - a.Tanggal_Pemesanan.seconds
+        )
+        .map((pemesanan) => (
+          <Card
+            key={pemesanan.id}
+            shadow={false}
+            className="rounded-lg border-2 border-gray-300 p-4 my-5"
+          >
+            <div className="mb-4 flex items-start justify-between">
+              <div className="flex items-center gap-3">
+                <div className="border border-gray-200 p-2.5 rounded-lg">
+                  <RiFileList3Fill className="h-6 w-6 text-gray-900" />
+                </div>
+                <div>
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="mb-1 font-bold"
+                  >
+                    Nomor Pesanan: {pemesanan.id}
+                  </Typography>
+                  <Typography className="!text-gray-600 text-xs font-normal">
+                    Tanggal Pemesanan:{" "}
+                    {new Date(
+                      pemesanan.Tanggal_Pemesanan.seconds * 1000
+                    ).toLocaleString()}
+                  </Typography>
+                  <Typography className="!text-gray-600 text-xs font-normal">
+                    Tanggal Pengajuan:{" "}
+                    {new Date(
+                      pemesanan.ajukanDetail.Tanggal_Pembuatan_Ajukan.seconds *
+                        1000
+                    ).toLocaleString()}
+                  </Typography>
+                </div>
               </div>
-              <div>
-                <Typography
-                  variant="small"
-                  color="blue-gray"
-                  className="mb-1 font-bold"
-                >
-                  Nomor Pesanan: {pemesanan.id}
+              <Button
+                size="sm"
+                variant="text"
+                className="flex items-center gap-2"
+                onClick={() => {
+                  setSelectedPesanan({ pemesanan });
+                  setOpenDialog(true);
+                }}
+              >
+                <FaInfoCircle className="h-4 w-4 text-gray-600" />
+                <Typography className="!font-semibold text-xs text-gray-600 md:block hidden">
+                  Lihat Detail
                 </Typography>
-                <Typography className="!text-gray-600 text-xs font-normal">
-                  Tanggal Pemesanan:{" "}
-                  {new Date(
-                    pemesanan.Tanggal_Pemesanan.seconds * 1000
-                  ).toLocaleString()}
+              </Button>
+            </div>
+            <div className="grid grid-cols-1 gap-1">
+              <div className="border-b border-gray-200 pb-2 mb-2">
+                <Typography className="mb-1 text-xs !font-medium !text-gray-600">
+                  {userData.Nama_Lengkap && userData.Nama_Perusahaan ? (
+                    <>
+                      {userData.Nama_Lengkap} - {userData.Nama_Perusahaan}
+                    </>
+                  ) : (
+                    userData.Nama_Lengkap || userData.Nama_Perusahaan || "N/A"
+                  )}
                 </Typography>
-                <Typography className="!text-gray-600 text-xs font-normal">
-                  Tanggal Pengajuan:{" "}
-                  {new Date(
-                    pemesanan.ajukanDetail.Tanggal_Pembuatan_Ajukan.seconds *
-                      1000
-                  ).toLocaleString()}
+                <Typography className="mb-1 text-xs !font-medium !text-gray-600">
+                  {userData.Email && userData.Email_Perusahaan ? (
+                    <>
+                      {userData.Email} - {userData.Email_Perusahaan}
+                    </>
+                  ) : (
+                    userData.Email || userData.Email_Perusahaan || "N/A"
+                  )}
+                </Typography>
+                <Typography className="mb-1 text-xs !font-medium !text-gray-600">
+                  {userData.No_Hp && userData.No_Hp_Perusahaan ? (
+                    <>
+                      {userData.No_Hp} - {userData.No_Hp_Perusahaan}
+                    </>
+                  ) : (
+                    userData.No_Hp || userData.No_Hp_Perusahaan || "N/A"
+                  )}
                 </Typography>
               </div>
             </div>
-            <Button
-              size="sm"
-              variant="text"
-              className="flex items-center gap-2"
-              onClick={() => {
-                setSelectedPesanan({ pemesanan });
-                setOpenDialog(true);
-              }}
-            >
-              <FaInfoCircle className="h-4 w-4 text-gray-600" />
-              <Typography className="!font-semibold text-xs text-gray-600 md:block hidden">
-                Lihat Detail
-              </Typography>
-            </Button>
-          </div>
-          <div className="grid grid-cols-1 gap-1">
-            <div className="border-b border-gray-200 pb-2 mb-2">
-              <Typography className="mb-1 text-xs !font-medium !text-gray-600">
-                {userData.Nama_Lengkap && userData.Nama_Perusahaan ? (
-                  <>
-                    {userData.Nama_Lengkap} - {userData.Nama_Perusahaan}
-                  </>
-                ) : (
-                  userData.Nama_Lengkap || userData.Nama_Perusahaan || "N/A"
-                )}
-              </Typography>
-              <Typography className="mb-1 text-xs !font-medium !text-gray-600">
-                {userData.Email && userData.Email_Perusahaan ? (
-                  <>
-                    {userData.Email} - {userData.Email_Perusahaan}
-                  </>
-                ) : (
-                  userData.Email || userData.Email_Perusahaan || "N/A"
-                )}
-              </Typography>
-              <Typography className="mb-1 text-xs !font-medium !text-gray-600">
-                {userData.No_Hp && userData.No_Hp_Perusahaan ? (
-                  <>
-                    {userData.No_Hp} - {userData.No_Hp_Perusahaan}
-                  </>
-                ) : (
-                  userData.No_Hp || userData.No_Hp_Perusahaan || "N/A"
-                )}
-              </Typography>
-            </div>
-          </div>
-        </Card>
-      ))}
+          </Card>
+        ))}
       <DetailTransaksi
         isOpen={openDialog}
         onClose={() => setOpenDialog(false)}

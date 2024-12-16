@@ -23,7 +23,7 @@ const KegiatanPertahananForm = ({ onSubmit, ID_Ajukan }) => {
       !files.SuratPermintaan_PertahananKeamanan ||
       files.SuratPermintaan_PertahananKeamanan.length === 0
     ) {
-      toast.error("Silakan unggah file Surat Perminataan.");
+      toast.error("Silakan unggah file Surat Permintaan.");
       return;
     }
 

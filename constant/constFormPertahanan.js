@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "@/app/globals.css";
 import { Button } from "@material-tailwind/react";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 
 const KegiatanPertahananForm = ({ onSubmit }) => {
   const [files, setFiles] = useState({});
@@ -23,7 +23,7 @@ const KegiatanPertahananForm = ({ onSubmit }) => {
       !files.SuratPermintaan_PertahananKeamanan ||
       files.SuratPermintaan_PertahananKeamanan.length === 0
     ) {
-      toast.error("Silakan unggah file Surat Perminataan.");
+      toast.error("Silakan unggah file Surat Permintaan.");
       return;
     }
 
