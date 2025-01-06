@@ -18,11 +18,12 @@ const useDialogPanduan = () => {
       size="xl"
       open={isDialogOpenPanduan}
       handler={setIsDialogOpenPanduan}
+      className="overflow-y-auto h-[90vh]"
     >
       <DialogHeader className="uppercase">
         Panduan Penggunaan PTSP BMKG Bengkulu
       </DialogHeader>
-      <DialogBody className="flex items-center justify-center w-full max-w-xs">
+      <DialogBody className="w-full max-w-xs">
         <div className="container mx-auto grid grid-cols-1 md:grid-cols-1 gap-8">
           <iframe
             src="https://scribehow.com/embed/Alur_Pengajuan_Berbayar_Atau_Pembelian_Berbayar__yY9KeUNwQJGNIi3WlLC4Wg"

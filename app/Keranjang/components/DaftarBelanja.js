@@ -2,6 +2,7 @@
 import "@/app/globals.css";
 import { Typography, Button } from "@/app/MTailwind";
 import { FaTrash } from "react-icons/fa6";
+import { PiPlusCircleFill, PiMinusCircle } from "react-icons/pi";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { toast } from "react-hot-toast";
@@ -11,11 +12,13 @@ import useAmbilKeranjang from "@/hooks/Backend/useAmbilKeranjang";
 const PemesananProduk = () => {
   const { navbarAktif, handlenavbarAktif } = useNavbarAktif();
   const HeaderPesanan = [
+    "No",
     "Nama",
     "Kategori",
     "Harga",
     "Kuantitas",
     "Total",
+    "Deskripsi",
     "Action",
   ];
   const handleLanjutkanPemesanan = (path) => {
@@ -28,8 +31,14 @@ const PemesananProduk = () => {
     }
     handlenavbarAktif(path);
   };
-  const { keranjang, memuat, ambilKeranjang, hapusItemKeranjang } =
-    useAmbilKeranjang();
+  const {
+    keranjang,
+    memuat,
+    ambilKeranjang,
+    hapusItemKeranjang,
+    updateItemKeranjang,
+    handleUpdateKuantitas,
+  } = useAmbilKeranjang();
   const cartContent = keranjang
     ? [...(keranjang.Informasi || []), ...(keranjang.Jasa || [])]
     : [];
@@ -38,25 +47,17 @@ const PemesananProduk = () => {
   }, 0);
 
   return (
-    <div className="mt-10 py-20 lg:py-10 z-10 relative">
+    <div className="mt-10 py-20 lg:py-10 z-10 relative overflow-x-hidden">
       <div className="text-base justify-center text-center font-bold"></div>
       <div className="grid grid-cols-1 justify-center items-center gap-10 lg:gap-2 space-y-10">
-        <div className="flex flex-col items-center justify-center w-full h-full mx-auto text-center leading-relaxed px-4 lg:px-80 overflow-auto">
-          <table className="w-full min-w-max table-fixed mx-auto bg-white rounded-2xl">
+        <div className="flex flex-col items-center justify-center w-screen h-full text-center leading-relaxed px-4 lg:px-16 overflow-auto">
+          <table className="w-full min-w-max table-fixed bg-white rounded-2xl">
             <thead>
               <tr>
-                <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4 text-center w-10">
-                  <Typography
-                    variant="h6"
-                    className="text-black font-black leading-none opacity-70"
-                  >
-                    No
-                  </Typography>
-                </th>
                 {HeaderPesanan.map((head) => (
                   <th
                     key={head}
-                    className="border-b border-blue-gray-100 bg-blue-gray-50 p-4 text-center w-40"
+                    className="border-b border-blue-gray-100 bg-blue-gray-50 p-4 text-center"
                   >
                     <Typography
                       variant="h6"
@@ -80,7 +81,10 @@ const PemesananProduk = () => {
                 </tr>
               ) : cartContent.length > 0 ? (
                 cartContent.map(
-                  ({ Nama, Harga, Kuantitas, Pemilik, Total_Harga }, index) => (
+                  (
+                    { Nama, Harga, Kuantitas, Pemilik, Deskripsi, Total_Harga },
+                    index
+                  ) => (
                     <tr key={index}>
                       <td className="p-4 text-center">{index + 1}</td>
                       <td className="p-4">{Nama}</td>
@@ -93,7 +97,28 @@ const PemesananProduk = () => {
                           maximumFractionDigits: 0,
                         }).format(Harga)}
                       </td>
-                      <td className="p-4">{Kuantitas}</td>
+                      <td className="p-4">
+                        <div className="flex items-center justify-center space-x-2">
+                          <button
+                            className="p-1 bg-red-800 text-white rounded-md hover:bg-gray-300"
+                            onClick={() =>
+                              handleUpdateKuantitas(index, Kuantitas - 1)
+                            }
+                            disabled={Kuantitas <= 1}
+                          >
+                            <PiMinusCircle className="h-5 w-5" />
+                          </button>
+                          <span>{Kuantitas}</span>
+                          <button
+                            className="p-1 bg-secondary text-white rounded-md hover:bg-gray-300"
+                            onClick={() =>
+                              handleUpdateKuantitas(index, Kuantitas + 1)
+                            }
+                          >
+                            <PiPlusCircleFill className="h-5 w-5" />
+                          </button>
+                        </div>
+                      </td>
                       <td className="p-4">
                         {new Intl.NumberFormat("id-ID", {
                           style: "currency",
@@ -102,6 +127,7 @@ const PemesananProduk = () => {
                           maximumFractionDigits: 0,
                         }).format(Total_Harga)}
                       </td>
+                      <td className="p-4">{Deskripsi}</td>
                       <td className="p-4">
                         <Button
                           className="p-2 border-0 shadow-none"

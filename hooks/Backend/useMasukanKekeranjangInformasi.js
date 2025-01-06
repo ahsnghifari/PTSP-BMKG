@@ -46,6 +46,7 @@ const useMasukanKeKeranjangInformasi = () => {
             Nama: dataInformasi.Nama,
             Harga: dataInformasi.Harga,
             Pemilik: dataInformasi.Pemilik,
+            Deskripsi: dataInformasi.Deskripsi,
             Kuantitas: 1,
             Total_Harga: dataInformasi.Harga,
           });
@@ -59,6 +60,7 @@ const useMasukanKeKeranjangInformasi = () => {
                 Nama: dataInformasi.Nama,
                 Harga: dataInformasi.Harga,
                 Pemilik: dataInformasi.Pemilik,
+                Deskripsi: dataInformasi.Deskripsi,
                 Kuantitas: 1,
                 Total_Harga: dataInformasi.Harga,
               },

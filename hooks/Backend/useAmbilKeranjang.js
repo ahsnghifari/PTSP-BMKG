@@ -90,12 +90,93 @@ const useAmbilKeranjang = () => {
       toast.error("Gagal menghapus item dari keranjang.");
     }
   };
+  const updateItemKeranjang = async (index, updatedQuantity, type) => {
+    try {
+      const penggunaSaatIni = localStorage.getItem("ID");
+      if (!penggunaSaatIni) {
+        toast.error("Anda harus masuk untuk memperbarui keranjang.");
+        return;
+      }
+
+      if (
+        !keranjang ||
+        !Array.isArray(keranjang[type]) ||
+        index < 0 ||
+        index >= keranjang[type].length
+      ) {
+        toast.error("Item tidak ditemukan di keranjang.");
+        return;
+      }
+
+      const updatedItems = [...keranjang[type]];
+      const itemToUpdate = updatedItems[index];
+      itemToUpdate.Kuantitas = updatedQuantity;
+      itemToUpdate.Total_Harga = itemToUpdate.Kuantitas * itemToUpdate.Harga;
+
+      const keranjangRef = doc(firestore, "keranjang", penggunaSaatIni);
+      await updateDoc(keranjangRef, {
+        [type]: updatedItems,
+      });
+
+      setKeranjang({
+        ...keranjang,
+        [type]: updatedItems,
+      });
+
+      toast.success("Kuantitas berhasil diperbarui.");
+    } catch (error) {
+      console.error("Gagal memperbarui kuantitas:", error);
+      toast.error("Terjadi kesalahan saat memperbarui kuantitas.");
+    }
+  };
+
+  const handleUpdateKuantitas = async (index, newQuantity) => {
+    if (!keranjang) {
+      toast.error("Keranjang kosong.");
+      return;
+    }
+
+    const informasiCount = keranjang.Informasi?.length || 0;
+
+    const type = index < informasiCount ? "Informasi" : "Jasa";
+    const relativeIndex =
+      index < informasiCount ? index : index - informasiCount;
+
+    const updatedItems = [...keranjang[type]];
+    updatedItems[relativeIndex].Kuantitas = newQuantity;
+
+    try {
+      const penggunaSaatIni = localStorage.getItem("ID");
+      const keranjangRef = doc(firestore, "keranjang", penggunaSaatIni);
+
+      await updateDoc(keranjangRef, {
+        [type]: updatedItems,
+      });
+
+      setKeranjang((prevKeranjang) => ({
+        ...prevKeranjang,
+        [type]: updatedItems,
+      }));
+
+      toast.success("Kuantitas berhasil diperbarui.");
+    } catch (error) {
+      console.error("Gagal memperbarui kuantitas:", error);
+      toast.error("Gagal memperbarui kuantitas.");
+    }
+  };
 
   useEffect(() => {
     ambilKeranjang();
   }, []);
 
-  return { keranjang, memuat, ambilKeranjang, hapusItemKeranjang };
+  return {
+    keranjang,
+    memuat,
+    ambilKeranjang,
+    hapusItemKeranjang,
+    updateItemKeranjang,
+    handleUpdateKuantitas,
+  };
 };
 
 export default useAmbilKeranjang;

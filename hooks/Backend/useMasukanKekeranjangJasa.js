@@ -46,6 +46,7 @@ const useMasukanKeKeranjangJasa = () => {
             Nama: dataJasa.Nama,
             Harga: dataJasa.Harga,
             Pemilik: dataJasa.Pemilik,
+            Deskripsi: dataJasa.Deskripsi,
             Kuantitas: 1,
             Total_Harga: dataJasa.Harga,
           });
@@ -59,6 +60,7 @@ const useMasukanKeKeranjangJasa = () => {
                 Nama: dataJasa.Nama,
                 Harga: dataJasa.Harga,
                 Pemilik: dataJasa.Pemilik,
+                Deskripsi: dataJasa.Deskripsi,
                 Kuantitas: 1,
                 Total_Harga: dataJasa.Harga,
               },
