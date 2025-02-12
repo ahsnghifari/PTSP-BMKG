@@ -25,13 +25,10 @@ const useDialogPanduan = () => {
       </DialogHeader>
       <DialogBody className="w-full max-w-xs">
         <div className="container mx-auto grid grid-cols-1 md:grid-cols-1 gap-8">
-          <iframe
-            src="https://scribehow.com/embed/Alur_Pengajuan_Berbayar_Atau_Pembelian_Berbayar__yY9KeUNwQJGNIi3WlLC4Wg"
-            width="100%"
-            height="640"
-            allowFullScreen
-            frameBorder="0"
-          ></iframe>
+          <video className="h-full w-full rounded-lg" controls autoPlay>
+            <source src="/assets/video/GuideLinePTSP.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
         </div>
       </DialogBody>
     </Dialog>
